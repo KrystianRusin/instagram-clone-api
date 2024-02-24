@@ -79,8 +79,21 @@ app.post("/signup", async (req, res) => {
   res.json({ user });
 });
 
-app.get("/login", passport.authenticate("local"), (req, res) => {
-  res.json({ user: req.user });
+app.post("/login", async (req, res) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.json({ err });
+    }
+    if (!user) {
+      return res.json({ info });
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.json({ err });
+      }
+      return res.json({ user, message: "Login successful!" });
+    });
+  })(req, res);
 });
 
 app.listen(port, () => {
