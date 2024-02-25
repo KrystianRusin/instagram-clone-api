@@ -4,6 +4,7 @@ const cors = require("cors");
 const User = require("./models/User");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const mainRouter = require("./routes");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -63,38 +64,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post("/signup", async (req, res) => {
-  const { email, fullName, username, password } = req.body;
-
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const user = new User({
-    email,
-    fullName,
-    username,
-    password: hashedPassword,
-  });
-  await user.save();
-  res.json({ user });
-});
-
-app.post("/login", async (req, res) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return res.json({ err });
-    }
-    if (!user) {
-      return res.json({ info });
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return res.json({ err });
-      }
-      return res.json({ user, message: "Login successful!" });
-    });
-  })(req, res);
-});
+app.use(mainRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
