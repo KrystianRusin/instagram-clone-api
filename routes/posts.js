@@ -3,39 +3,38 @@ const Post = require("../models/Post");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const AWS = require("aws-sdk");
+const admin = require("firebase-admin");
+require("dotenv").config();
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const serviceAccount = require("../serviceAccount.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
 
-const s3 = new AWS.S3();
+const bucket = admin.storage().bucket();
 
-const params = {
-  Bucket: process.env.AWS_BUCKET_NAME,
-};
-
-router.post("/create", upload.single("image"), async (req, res) => {
-  s3.listObjects(params, function (err, data) {
-    if (err) {
-      console.log("Error", err);
-    } else {
-      console.log("Success", data);
-    }
-  });
-  // use multer middleware
+router.post("/create", async (req, res) => {
   const { user, comment } = req.body;
-  //const image = req.file.path; // get the path of the uploaded file
 
   const post = new Post({
     user,
     comment,
-    // image, // store the path in the database
     Date: new Date(),
   });
+
   await post.save();
-  res.json({ post });
+
+  bucket.getFiles(function (err, files) {
+    if (err) {
+      console.error("Error connecting to Firebase:", err);
+      return res.status(500).json({ error: "Error connecting to Firebase" });
+    }
+
+    console.log("Successfully connected to Firebase");
+    res.json({ post, firebaseConnection: "successful" });
+  });
 });
 
 module.exports = router;
