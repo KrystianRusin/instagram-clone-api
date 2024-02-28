@@ -4,6 +4,7 @@ const router = express.Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const admin = require("firebase-admin");
+const sharp = require("sharp");
 require("dotenv").config();
 
 const serviceAccount = require("../serviceAccount.json");
@@ -15,26 +16,44 @@ admin.initializeApp({
 
 const bucket = admin.storage().bucket();
 
-router.post("/create", async (req, res) => {
+router.post("/create", upload.single("image"), async (req, res) => {
   const { user, comment } = req.body;
+  const file = req.file; // this is the uploaded image file
 
-  const post = new Post({
-    user,
-    comment,
-    Date: new Date(),
+  const compressedImage = await sharp(file.path)
+    .resize(800)
+    .jpeg({ quality: 80 })
+    .toBuffer();
+
+  // Create a new blob in the bucket and upload the file data
+  const blob = bucket.file(file.originalname);
+  const blobStream = blob.createWriteStream();
+
+  blobStream.on("error", (err) => {
+    console.error("Error uploading to Firebase:", err);
+    return res.status(500).json({ error: "Error uploading to Firebase" });
   });
 
-  await post.save();
+  blobStream.on("finish", async () => {
+    // The public URL can be used to directly access the file via HTTP.
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/${encodeURI(blob.name)}`;
 
-  bucket.getFiles(function (err, files) {
-    if (err) {
-      console.error("Error connecting to Firebase:", err);
-      return res.status(500).json({ error: "Error connecting to Firebase" });
-    }
+    const post = new Post({
+      user,
+      comment,
+      image: publicUrl, // store the image URL in the database
+      Date: new Date(),
+    });
+
+    await post.save();
 
     console.log("Successfully connected to Firebase");
     res.json({ post, firebaseConnection: "successful" });
   });
+
+  blobStream.end(file.buffer);
 });
 
 module.exports = router;
