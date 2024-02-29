@@ -38,7 +38,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
     // The public URL can be used to directly access the file via HTTP.
     const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
       bucket.name
-    }/${encodeURI(blob.name)}`;
+    }/o/${encodeURIComponent(blob.name)}?alt=media`;
 
     const post = new Post({
       user,
@@ -53,7 +53,13 @@ router.post("/create", upload.single("image"), async (req, res) => {
     res.json({ post, firebaseConnection: "successful" });
   });
 
-  blobStream.end(file.buffer);
+  blobStream.end(compressedImage); // Write the compressed image buffer to the blob stream
+});
+
+router.get("/feed", async (req, res) => {
+  console.log("Fetching posts");
+  const posts = await Post.find({}).sort({ Date: -1 });
+  res.json(posts);
 });
 
 module.exports = router;
