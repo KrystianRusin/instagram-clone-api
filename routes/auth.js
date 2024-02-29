@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
       return res.json({ err });
     }
     if (!user) {
-      return res.json({ info });
+      return res.status(401).json({ message: "Authentication failed" });
     }
     req.logIn(user, (err) => {
       if (err) {

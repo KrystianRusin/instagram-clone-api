@@ -17,7 +17,7 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 
 router.post("/create", upload.single("image"), async (req, res) => {
-  const { user, comment } = req.body;
+  const { user, caption } = req.body;
   const file = req.file; // this is the uploaded image file
 
   const compressedImage = await sharp(file.path)
@@ -42,7 +42,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
 
     const post = new Post({
       user,
-      comment,
+      caption,
       image: publicUrl, // store the image URL in the database
       Date: new Date(),
     });
