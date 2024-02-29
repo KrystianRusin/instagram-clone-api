@@ -21,7 +21,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
   const file = req.file; // this is the uploaded image file
 
   const compressedImage = await sharp(file.path)
-    .resize(800)
+    .resize(800, 800, { fit: "cover" })
     .jpeg({ quality: 80 })
     .toBuffer();
 
