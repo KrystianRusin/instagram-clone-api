@@ -5,7 +5,11 @@ const UserSchema = new mongoose.Schema({
   fullName: String,
   username: String,
   password: String,
-  profilePic: String,
+  profilePic: {
+    type: String,
+    default:
+      "https://firebasestorage.googleapis.com/v0/b/instagram-clone-af213.appspot.com/o/Default.png?alt=media",
+  },
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });

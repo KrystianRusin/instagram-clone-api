@@ -58,7 +58,9 @@ router.post("/create", upload.single("image"), async (req, res) => {
 
 router.get("/feed", async (req, res) => {
   console.log("Fetching posts");
-  const posts = await Post.find({}).sort({ Date: -1 });
+  const posts = await Post.find({})
+    .sort({ Date: -1 })
+    .populate("user", "username profilePic");
   res.json(posts);
 });
 
