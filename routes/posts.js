@@ -64,4 +64,25 @@ router.get("/feed", async (req, res) => {
   res.json(posts);
 });
 
+router.post("/like", async (req, res) => {
+  const { postId, userId } = req.body;
+
+  const post = await Post.findById(postId);
+
+  console.log(userId);
+
+  if (!post) {
+    res.status(404).json({ error: "Post not found" });
+  }
+  const likes = post.likes.map((like) => like.toString());
+  const operator = likes.includes(userId) ? "$pull" : "$addToSet";
+
+  const updatedPost = await Post.findOneAndUpdate(
+    { _id: postId },
+    { [operator]: { likes: userId } },
+    { new: true, runValidators: true }
+  );
+  res.json(updatedPost);
+});
+
 module.exports = router;
