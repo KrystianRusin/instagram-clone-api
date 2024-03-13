@@ -5,6 +5,7 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const admin = require("firebase-admin");
 const sharp = require("sharp");
+const Comment = require("../models/Comment");
 require("dotenv").config();
 
 const serviceAccount = require("../serviceAccount.json");
@@ -83,6 +84,32 @@ router.post("/like", async (req, res) => {
     { new: true, runValidators: true }
   );
   res.json(updatedPost);
+});
+
+router.post("/comment", async (req, res) => {
+  const { user, postId, text } = req.body;
+  // Create a new comment
+  const comment = new Comment({
+    user,
+    text,
+    date: new Date(),
+  });
+
+  try {
+    // Save the comment
+    await comment.save();
+
+    // Find the post and add the comment to the comments array
+    const post = await Post.findById(postId);
+    post.comments.push(comment._id);
+    await post.save();
+
+    res.json({ message: "Comment created successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the comment" });
+  }
 });
 
 module.exports = router;
