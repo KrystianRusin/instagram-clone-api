@@ -112,4 +112,23 @@ router.post("/comment", async (req, res) => {
   }
 });
 
+router.get("/:postId/comment", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId).populate({
+      path: "comments",
+      populate: {
+        path: "user",
+        select: "username profilePic",
+      },
+    });
+    res.json(post.comments);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the comments" });
+  }
+});
+
 module.exports = router;
