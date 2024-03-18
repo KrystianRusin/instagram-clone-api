@@ -6,6 +6,7 @@ const upload = multer({ dest: "uploads/" });
 const admin = require("firebase-admin");
 const sharp = require("sharp");
 const Comment = require("../models/Comment");
+const User = require("../models/User");
 require("dotenv").config();
 
 const serviceAccount = require("../serviceAccount.json");
@@ -49,6 +50,11 @@ router.post("/create", upload.single("image"), async (req, res) => {
     });
 
     await post.save();
+
+    //save post id to user posts array
+    const userRecord = await User.findById(user);
+    userRecord.posts.push(post._id);
+    await userRecord.save();
 
     console.log("Successfully connected to Firebase");
     res.json({ post, firebaseConnection: "successful" });

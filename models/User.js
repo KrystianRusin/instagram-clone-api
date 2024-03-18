@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema({
     default:
       "https://firebasestorage.googleapis.com/v0/b/instagram-clone-af213.appspot.com/o/Default.png?alt=media",
   },
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+  bio: String,
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
