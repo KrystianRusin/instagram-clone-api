@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../models/User");
 const { ObjectId } = require("mongodb");
 
-router.get("/users/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const user = await User.findOne({ _id: id });
