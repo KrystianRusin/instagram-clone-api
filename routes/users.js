@@ -6,7 +6,7 @@ const { ObjectId } = require("mongodb");
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const user = await User.findOne({ _id: id });
+    const user = await User.findOne({ _id: id }).populate("posts");
     res.json(user);
   } catch (error) {
     res.json({ message: "An error occurred while fetching user data" });
