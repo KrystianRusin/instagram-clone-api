@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
-router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+router.get("/:username", async (req, res) => {
+  const username = req.params.username;
   try {
-    const user = await User.findOne({ _id: id }).populate("posts");
+    const user = await User.findOne({ username: username }).populate("posts");
     res.json(user);
   } catch (error) {
     res.json({ message: "An error occurred while fetching user data" });
