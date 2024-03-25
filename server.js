@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const User = require("./models/User");
-const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const mainRouter = require("./routes");
 const passport = require("passport");
@@ -52,7 +51,8 @@ const session = require("express-session");
 
 app.use(
   session({
-    secret: "secret",
+    name: "igClone.sid",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   })
