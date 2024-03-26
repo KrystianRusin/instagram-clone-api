@@ -26,4 +26,44 @@ router.get("/search/:searchTerm", async (req, res) => {
   }
 });
 
+router.put("/:userId/follow", async (req, res) => {
+  const { userId } = req.params;
+  const { followerId } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { followers: followerId },
+      { new: true }
+    );
+    const follower = await User.findByIdAndUpdate(
+      followerId,
+      { following: userId },
+      { new: true }
+    );
+    res.json({ user, follower });
+  } catch (error) {
+    res.json({ message: "An error occurred while updating followers" });
+  }
+});
+
+router.put("/:userId/unfollow", async (req, res) => {
+  const { userId } = req.params;
+  const { followerId } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { followers: followerId } },
+      { new: true }
+    );
+    const follower = await User.findByIdAndUpdate(
+      followerId,
+      { $pull: { following: userId } },
+      { new: true }
+    );
+    res.json({ user, follower });
+  } catch (error) {
+    res.json({ message: "An error occurred while updating followers" });
+  }
+});
+
 module.exports = router;
