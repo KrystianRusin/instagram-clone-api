@@ -3,20 +3,12 @@ const Post = require("../models/Post");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const admin = require("firebase-admin");
 const sharp = require("sharp");
 const Comment = require("../models/Comment");
 const User = require("../models/User");
 require("dotenv").config();
 
-const serviceAccount = require("../serviceAccount.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-});
-
-const bucket = admin.storage().bucket();
+const { bucket } = require("../util/firebaseSetup");
 
 router.post("/create", upload.single("image"), async (req, res) => {
   const { user, caption } = req.body;
