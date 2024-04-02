@@ -57,11 +57,21 @@ router.post("/create", upload.single("image"), async (req, res) => {
 });
 
 // Route to handle fetching all posts
-router.get("/feed", async (req, res) => {
+router.get("/feed/:_id", async (req, res) => {
   console.log("Fetching posts");
-  const posts = await Post.find({})
-    .sort({ Date: -1 })
+  const userId = req.params._id;
+
+  // Fetch the current user's data
+  const currentUser = await User.findById(userId);
+
+  // Get the list of users the current user is following
+  const following = currentUser.following;
+
+  // Fetch posts from users the current user is following
+  const posts = await Post.find({ user: { $in: following } })
+    .sort({ Date: -1 }) // Sort by date in descending order
     .populate("user", "username profilePic");
+
   res.json(posts);
 });
 
