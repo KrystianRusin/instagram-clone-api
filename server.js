@@ -12,7 +12,13 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI);
