@@ -16,4 +16,8 @@ router.get("/default-avatar", (req, res) => {
   res.json({ defaultAvatarUrl });
 });
 
+router.get("/health", (req, res) => {
+  res.json({ message: "Server is up and running" });
+});
+
 module.exports = router;
