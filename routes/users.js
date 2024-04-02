@@ -51,12 +51,12 @@ router.put("/:userId/follow", async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       userId,
-      { followers: followerId },
+      { $push: { followers: followerId } },
       { new: true }
     );
     const follower = await User.findByIdAndUpdate(
       followerId,
-      { following: userId },
+      { $push: { following: userId } },
       { new: true }
     );
     res.json({ user, follower });
