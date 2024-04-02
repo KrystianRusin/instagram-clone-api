@@ -4,6 +4,7 @@ const passport = require("passport");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
+// Route to handle user signup
 router.post("/signup", async (req, res) => {
   const { email, fullName, username, password } = req.body;
 
@@ -29,6 +30,7 @@ router.post("/signup", async (req, res) => {
   res.json({ user });
 });
 
+// Route to handle user login
 router.post("/login", async (req, res) => {
   passport.authenticate("local", (err, user) => {
     if (err) {

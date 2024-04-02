@@ -10,6 +10,7 @@ require("dotenv").config();
 
 const { bucket } = require("../util/firebaseSetup");
 
+// Route to handle creating a new post
 router.post("/create", upload.single("image"), async (req, res) => {
   const { user, caption } = req.body;
   const file = req.file; // this is the uploaded image file
@@ -55,6 +56,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
   blobStream.end(compressedImage); // Write the compressed image buffer to the blob stream
 });
 
+// Route to handle fetching all posts
 router.get("/feed", async (req, res) => {
   console.log("Fetching posts");
   const posts = await Post.find({})
@@ -63,6 +65,7 @@ router.get("/feed", async (req, res) => {
   res.json(posts);
 });
 
+// Route to handle fetching posts by user
 router.post("/like", async (req, res) => {
   const { postId, userId } = req.body;
 
@@ -84,6 +87,7 @@ router.post("/like", async (req, res) => {
   res.json(updatedPost);
 });
 
+// Route to handle creating a new comment
 router.post("/comment", async (req, res) => {
   const { user, postId, text } = req.body;
   // Create a new comment
@@ -110,6 +114,7 @@ router.post("/comment", async (req, res) => {
   }
 });
 
+// Route to handle fetching comments by post
 router.get("/:postId/comment", async (req, res) => {
   const { postId } = req.params;
 

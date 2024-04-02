@@ -8,6 +8,7 @@ router.use("/auth", authRoutes);
 router.use("/posts", postsRoutes);
 router.use("/users", userRoutes);
 
+// Route to handle fetching default avatar URL
 router.get("/default-avatar", (req, res) => {
   console.log("yes");
   const defaultAvatarUrl =

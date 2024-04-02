@@ -23,6 +23,7 @@ db.once("open", function () {
   console.log("Connected to MongoDB");
 });
 
+// Passport setup
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     const user = await User.findOne({ username });
@@ -37,6 +38,7 @@ passport.use(
   })
 );
 
+// Passport serialization and deserialization
 passport.serializeUser(function (user, done) {
   done(null, user.id);
 });

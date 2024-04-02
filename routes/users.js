@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const { bucket } = require("../util/firebaseSetup");
 
+// Route to handle fetching user data by username
 router.get("/:username", async (req, res) => {
   const username = req.params.username;
   try {
@@ -19,6 +20,7 @@ router.get("/:username", async (req, res) => {
   }
 });
 
+// Route to handle fetching user data by user ID
 router.get("/id/:userId", async (req, res) => {
   const userId = req.params.userId;
   try {
@@ -29,6 +31,7 @@ router.get("/id/:userId", async (req, res) => {
   }
 });
 
+// Route to handle searching for users by username
 router.get("/search/:searchTerm", async (req, res) => {
   const searchTerm = req.params.searchTerm;
   try {
@@ -41,6 +44,7 @@ router.get("/search/:searchTerm", async (req, res) => {
   }
 });
 
+// Route to handle following a user (updates both user's followers and following lists)
 router.put("/:userId/follow", async (req, res) => {
   const { userId } = req.params;
   const { followerId } = req.body;
@@ -61,6 +65,7 @@ router.put("/:userId/follow", async (req, res) => {
   }
 });
 
+// Route to handle unfollowing a user (updates both user's followers and following lists)
 router.put("/:userId/unfollow", async (req, res) => {
   const { userId } = req.params;
   const { followerId } = req.body;
@@ -81,6 +86,7 @@ router.put("/:userId/unfollow", async (req, res) => {
   }
 });
 
+// Route to handle updating user data from edit profile form
 router.put("/:userId/update", upload.single("avatar"), async (req, res) => {
   const { userId } = req.params;
   const { bio } = req.body;
