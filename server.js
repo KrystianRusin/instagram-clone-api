@@ -16,7 +16,7 @@ app.use(
   cors({
     origin: [
       "https://instagram-clone-eosin-three.vercel.app",
-      "http://localhost:51973",
+      "http://localhost:5173",
     ],
   })
 );
