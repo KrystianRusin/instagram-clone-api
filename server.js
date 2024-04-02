@@ -12,7 +12,14 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://instagram-clone-eosin-three.vercel.app",
+      "http://localhost:51973",
+    ],
+  })
+);
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI);
