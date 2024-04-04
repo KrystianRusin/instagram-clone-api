@@ -100,9 +100,11 @@ router.post("/like", async (req, res) => {
 // Route to handle creating a new comment
 router.post("/comment", async (req, res) => {
   const { user, postId, text } = req.body;
+  console.log(req.body);
   // Create a new comment
   const comment = new Comment({
     user,
+    post: postId,
     text,
     date: new Date(),
   });
@@ -138,6 +140,25 @@ router.get("/:postId/comment", async (req, res) => {
     });
     res.json(post.comments);
   } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the comments" });
+  }
+});
+
+router.get("/:postId/commentTotal", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const comments = post.comments.length;
+    res.json(comments);
+  } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "An error occurred while retrieving the comments" });
