@@ -14,10 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "https://instagram-clone-eosin-three.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: ["https://www.krystianigclone.com", "http://localhost:5173"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
